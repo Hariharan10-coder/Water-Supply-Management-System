@@ -1,69 +1,139 @@
-# Water Supply Management System — Login, Dashboard, Authentication
+# Water Supply Management System
 
-Java Swing desktop app (matches your SRS: Java + MySQL + JDBC) implementing:
-- **FR1 User Login** — username/password authentication against MySQL
-- **Role-based Dashboard** — different menu items for Admin / Officer / Maintenance / Customer
-- **Logout** — returns to the login screen
-- **Encrypted password storage** — SHA-256 hashing (NFR: Security)
+A web-based Water Supply Management System developed using **Python, Flask, SQLite, HTML, CSS, and Jinja2**.
 
-## Files
-- `DBConnection.java` — MySQL JDBC connection
-- `PasswordUtil.java` — SHA-256 password hashing (also runnable to generate hashes)
-- `User.java` — simple user session model
-- `LoginForm.java` — login screen + authentication logic
-- `Dashboard.java` — post-login dashboard with role-based menu + logout
-- `database.sql` — creates the database, `users` table, and supporting tables from SRS section 6
+The system manages water supply operations through role-based access for:
 
-## 1. Prerequisites
-- Java JDK 17 (as specified in your SRS)
-- MySQL Server, running locally
-- MySQL Connector/J (JDBC driver) — download the `.jar` from
-  https://dev.mysql.com/downloads/connector/j/
+- Admin
+- Water Supply Officer
+- Maintenance Staff
+- Customer
 
-## 2. Set up the database
-```bash
-mysql -u root -p < database.sql
-```
-Then generate real password hashes and update the `users` table:
-```bash
-javac PasswordUtil.java
-java PasswordUtil admin123
-```
-Copy the printed hash and run, for example:
-```sql
-UPDATE users SET password = '<hash>' WHERE username = 'admin';
-```
-Repeat for `officer`, `staff`, `customer` (or add your own users).
+---
 
-## 3. Configure the connection
-Open `DBConnection.java` and set your MySQL password:
-```java
-private static final String DB_PASSWORD = "your_mysql_password";
-```
+## Features
 
-## 4. Compile and run
-Place `mysql-connector-j-<version>.jar` in the same folder, then:
+### Authentication
 
-**Windows:**
-```bash
-javac *.java
-java -cp ".;mysql-connector-j-9.0.0.jar" LoginForm
-```
+- User login
+- User logout
+- Customer registration
+- Password hashing
+- Password policy validation
+- Forgot password
+- Change password
+- Temporary password generation
+- Role-based access control
 
-**macOS/Linux:**
-```bash
-javac *.java
-java -cp ".:mysql-connector-j-9.0.0.jar" LoginForm
-```
+### Role-Based Dashboards
 
-The login window opens first. Log in with one of the seeded usernames
-(`admin`, `officer`, `staff`, `customer`) and the password you hashed in
-step 2 — you'll land on the role-appropriate dashboard, and Logout returns
-you to the login screen.
+Different users are redirected to their appropriate dashboard after login.
 
-## Next steps (to complete the rest of your SRS)
-Each dashboard button currently opens a placeholder dialog. Wire them up to
-real screens as you build out FR2–FR8: Customer Management, Billing,
-Maintenance Requests, Leakage Reporting, Complaints, and Reports — using the
-`customer`, `water_usage`, `billing`, `maintenance`, and `complaint` tables
-already created in `database.sql`.
+| Role | Dashboard |
+|---|---|
+| Admin | `dashboard.html` |
+| Officer | `officer_dashboard.html` |
+| Maintenance Staff | `maintenance_dashboard.html` |
+| Customer | `customer_dashboard.html` |
+
+### Admin
+
+The Admin can:
+
+- View the Admin dashboard
+- Create Officer accounts
+- Create Maintenance Staff accounts
+- View staff accounts
+- Reset staff passwords
+- Delete staff accounts
+- Manage customers
+
+### Officer
+
+The Officer dashboard is designed for water supply administration and service management.
+
+### Maintenance Staff
+
+The Maintenance Staff dashboard is designed for:
+
+- Viewing assigned maintenance work
+- Tracking maintenance status
+- Updating work progress
+- Viewing completed maintenance work
+
+### Customer
+
+The Customer dashboard is designed for customers to access their water supply services and account information.
+
+---
+
+## Technologies Used
+
+- **Python**
+- **Flask**
+- **SQLite**
+- **Flask-SQLAlchemy**
+- **Flask-Login**
+- **HTML5**
+- **CSS3**
+- **Jinja2**
+
+---
+
+## Project Structure
+
+```text
+wsms_app/
+│
+├── app.py
+├── config.py
+├── extensions.py
+├── requirements.txt
+│
+├── models/
+│   ├── __init__.py
+│   ├── customer_model.py
+│   └── user_model.py
+│
+├── routes/
+│   ├── __init__.py
+│   ├── auth_routes.py
+│   └── customer_routes.py
+│
+├── services/
+│   ├── __init__.py
+│   └── rbac_service.py
+│
+├── utils/
+│   ├── __init__.py
+│   ├── auth_utils.py
+│   └── validators.py
+│
+├── templates/
+│   ├── base.html
+│   ├── login.html
+│   ├── register.html
+│   ├── forgot_password.html
+│   ├── change_password.html
+│   ├── dashboard.html
+│   ├── officer_dashboard.html
+│   ├── maintenance_dashboard.html
+│   ├── customer_dashboard.html
+│   │
+│   ├── customers/
+│   │   ├── form.html
+│   │   └── list.html
+│   │
+│   └── users/
+│       ├── new.html
+│       └── list.html
+│
+├── static/
+│   └── css/
+│       └── style.css
+│
+├── seed_admin.py
+├── reset_admin.py
+├── reset_staff.py
+│
+└── .gitignore
