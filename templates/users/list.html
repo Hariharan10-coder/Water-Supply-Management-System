@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Accounts{% endblock %}
+
+{% block content %}
+
+<div class="topbar">
+
+    <div>
+        <h1>Staff Accounts</h1>
+
+        <p class="subtitle">
+            Manage Water Supply Officers and Maintenance Staff accounts.
+        </p>
+    </div>
+
+    <!-- CREATE STAFF ACCOUNT -->
+    <a
+        class="btn btn-primary"
+        href="{{ url_for('auth.create_staff_user') }}"
+    >
+        + Create staff account
+    </a>
+
+</div>
+
+
+<div class="card" style="padding:0;">
+
+    {% if staff_users %}
+
+    <table style="width:100%; border-collapse:collapse;">
+
+        <thead>
+
+            <tr>
+
+                <th style="text-align:left; padding:12px;">
+                    Username
+                </th>
+
+                <th style="text-align:left; padding:12px;">
+                    Role
+                </th>
+
+                <th style="text-align:right; padding:12px;">
+                    Action
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+        {% for user in staff_users %}
+
+            <tr>
+
+                <!-- USERNAME -->
+                <td style="padding:12px;">
+
+                    <span class="mono">
+                        {{ user.username }}
+                    </span>
+
+                </td>
+
+
+                <!-- ROLE -->
+                <td style="padding:12px;">
+
+                    <span class="role-badge">
+                        {{ user.role }}
+                    </span>
+
+                </td>
+
+
+                <!-- ACTION -->
+                <td
+                    style="
+                        padding:12px;
+                        text-align:right;
+                        white-space:nowrap;
+                    "
+                >
+
+                    <!-- RESET PASSWORD -->
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'auth.reset_staff_password',
+                            user_id=user.user_id
+                        ) }}"
+                        style="display:inline;"
+                        onsubmit="
+                            return confirm(
+                                'Reset this staff member password?'
+                            );
+                        "
+                    >
+
+                        <!-- CSRF TOKEN -->
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary btn-sm"
+                        >
+                            Reset Password
+                        </button>
+
+                    </form>
+
+
+                    <!-- DELETE STAFF -->
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'auth.delete_staff_user',
+                            user_id=user.user_id
+                        ) }}"
+                        style="display:inline;"
+                        onsubmit="
+                            return confirm(
+                                'Are you sure you want to permanently delete this staff account?'
+                            );
+                        "
+                    >
+
+                        <!-- CSRF TOKEN -->
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger btn-sm"
+                        >
+                            Delete
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    {% else %}
+
+        <!-- NO STAFF -->
+        <div class="empty-state">
+
+            <div class="drop-lg"></div>
+
+            <p>
+                No Officer or Maintenance Staff accounts found.
+            </p>
+
+            <a
+                class="btn btn-primary"
+                href="{{ url_for('auth.create_staff_user') }}"
+            >
+                + Create staff account
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

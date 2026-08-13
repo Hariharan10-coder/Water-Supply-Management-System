@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+  <div class="topbar">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="subtitle">Signed in as <strong>{{ current_user.username }}</strong> — {{ current_user.role }}</p>
+    </div>
+  </div>
+
+  <div class="card">
+    {% if current_user.has_role('admin') %}
+      <h2>Administrator</h2>
+      <p class="subtitle" style="margin-bottom:16px;">Full access to customer records, staff provisioning, and system reports.</p>
+      <a class="btn btn-primary" href="{{ url_for('customer.list_customers') }}">View customers</a>
+      <a class="btn btn-outline" href="{{ url_for('auth.create_staff_user') }}">Create staff account</a>
+
+    {% elif current_user.has_role('officer') %}
+      <h2>Water Supply Officer</h2>
+      <p class="subtitle" style="margin-bottom:16px;">View customer records, verify new registrations, and manage meter readings and billing.</p>
+      <a class="btn btn-primary" href="{{ url_for('customer.list_customers') }}">View customers</a>
+
+    {% elif current_user.has_role('staff') %}
+      <h2>Maintenance Staff</h2>
+      <p class="subtitle">Your assigned maintenance and leakage requests will appear here once those modules are enabled.</p>
+
+    {% else %}
+      <h2>Customer</h2>
+      <p class="subtitle">Your usage, billing, and complaint tools will appear here once those modules are enabled.</p>
+    {% endif %}
+  </div>
+{% endblock %}

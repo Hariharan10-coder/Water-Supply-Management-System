@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Customers{% endblock %}
+
+{% block content %}
+
+<div class="topbar">
+    <div>
+        <h1>Customers</h1>
+
+        <p class="subtitle">
+            {{ customers|length }} record{{ 's' if customers|length != 1 }}
+
+            {% if query %}
+                matching "{{ query }}"
+            {% endif %}
+        </p>
+    </div>
+
+    {% if can_edit %}
+        <a class="btn btn-primary"
+           href="{{ url_for('customer.add_customer') }}">
+            + Add customer
+        </a>
+    {% endif %}
+</div>
+
+
+<div class="card" style="padding:14px 18px;">
+
+    <form method="GET"
+          action="{{ url_for('customer.list_customers') }}"
+          style="display:flex; gap:10px;">
+
+        <input
+            type="search"
+            name="q"
+            placeholder="Search by name, phone, or meter number..."
+            value="{{ query }}"
+            style="max-width:340px;"
+        >
+
+        <button type="submit" class="btn btn-outline">
+            Search
+        </button>
+
+        {% if query %}
+            <a class="btn btn-outline"
+               href="{{ url_for('customer.list_customers') }}">
+                Clear
+            </a>
+        {% endif %}
+
+    </form>
+
+</div>
+
+
+<div class="card" style="padding:0;">
+
+    {% if customers %}
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Meter No.</th>
+                <th>Status</th>
+
+                {% if can_edit %}
+                    <th></th>
+                {% endif %}
+            </tr>
+        </thead>
+
+
+        <tbody>
+
+            {% for c in customers %}
+
+            <tr>
+
+                <td class="mono">
+                    #{{ c.customer_id }}
+                </td>
+
+                <td>
+                    {{ c.name }}
+                </td>
+
+                <td class="mono">
+                    {{ c.phone }}
+                </td>
+
+                <td class="mono">
+                    {{ c.meter_no }}
+                </td>
+
+                <td>
+
+                    {% if c.status == 'Active' %}
+
+                        <span class="badge badge-active">
+                            Active
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge badge-pending">
+                            Pending
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                {% if can_edit %}
+
+                <td style="text-align:right; white-space:nowrap;">
+
+                    <!-- VERIFY -->
+                    {% if c.status == 'Pending' %}
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('customer.verify_customer', customer_id=c.customer_id) }}"
+                        style="display:inline;"
+                    >
+
+                        <!-- CSRF TOKEN -->
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-outline btn-sm"
+                        >
+                            Verify
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+
+                    <!-- EDIT -->
+                    <a
+                        class="btn btn-outline btn-sm"
+                        href="{{ url_for('customer.edit_customer', customer_id=c.customer_id) }}"
+                    >
+                        Edit
+                    </a>
+
+
+                    <!-- DELETE -->
+                    <form
+                        method="POST"
+                        action="{{ url_for('customer.delete_customer', customer_id=c.customer_id) }}"
+                        style="display:inline;"
+                        onsubmit="return confirm('Delete this customer record?');"
+                    >
+
+                        <!-- CSRF TOKEN -->
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ csrf_token() }}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger btn-sm"
+                        >
+                            Delete
+                        </button>
+
+                    </form>
+
+                </td>
+
+                {% endif %}
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="drop-lg"></div>
+
+            <p>
+                No customers found
+
+                {% if query %}
+                    for "{{ query }}"
+                {% endif %}.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

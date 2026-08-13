@@ -1,0 +1,549 @@
+{% extends "base.html" %}
+
+{% block title %}Officer Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- =========================================================
+     OFFICER DASHBOARD
+     ========================================================= -->
+
+<div class="topbar">
+
+    <div>
+        <h1>Water Supply Officer Dashboard</h1>
+
+        <p class="subtitle">
+            Monitor customers, water supply records, verification,
+            billing and service activities.
+        </p>
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     WELCOME
+     ========================================================= -->
+
+<div class="card">
+
+    <h2>
+        Welcome, {{ current_user.username }}
+    </h2>
+
+    <p class="subtitle">
+        You are logged in as a Water Supply Officer.
+    </p>
+
+</div>
+
+
+<!-- =========================================================
+     SUMMARY CARDS
+     ========================================================= -->
+
+<div class="dashboard-grid">
+
+
+    <!-- CUSTOMERS -->
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Total Customers
+        </div>
+
+        <div class="stat-value">
+            {{ total_customers|default(0) }}
+        </div>
+
+        <div class="stat-description">
+            Registered customers
+        </div>
+
+    </div>
+
+
+    <!-- PENDING VERIFICATION -->
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Pending Verification
+        </div>
+
+        <div class="stat-value">
+            {{ pending_customers|default(0) }}
+        </div>
+
+        <div class="stat-description">
+            Customers awaiting verification
+        </div>
+
+    </div>
+
+
+    <!-- ACTIVE CUSTOMERS -->
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Active Customers
+        </div>
+
+        <div class="stat-value">
+            {{ active_customers|default(0) }}
+        </div>
+
+        <div class="stat-description">
+            Verified customer accounts
+        </div>
+
+    </div>
+
+
+    <!-- MAINTENANCE -->
+
+    <div class="stat-card">
+
+        <div class="stat-label">
+            Maintenance Requests
+        </div>
+
+        <div class="stat-value">
+            {{ maintenance_requests|default(0) }}
+        </div>
+
+        <div class="stat-description">
+            Service requests
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================================================
+     OFFICER OPERATIONS
+     ========================================================= -->
+
+<div class="card">
+
+    <div class="section-heading">
+
+        <div>
+            <h2>Officer Operations</h2>
+
+            <p class="subtitle">
+                Manage daily water supply activities.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="action-grid">
+
+
+        <!-- CUSTOMER MANAGEMENT -->
+
+        <a
+            class="action-card"
+            href="{{ url_for('customer.list_customers') }}"
+        >
+
+            <div class="action-icon">
+                👥
+            </div>
+
+            <div>
+
+                <h3>
+                    Customer Management
+                </h3>
+
+                <p>
+                    View customer details, phone numbers,
+                    meter numbers and account status.
+                </p>
+
+            </div>
+
+        </a>
+
+
+        <!-- VERIFY CUSTOMERS -->
+
+        <a
+            class="action-card"
+            href="{{ url_for('customer.list_customers') }}"
+        >
+
+            <div class="action-icon">
+                ✓
+            </div>
+
+            <div>
+
+                <h3>
+                    Verify Customers
+                </h3>
+
+                <p>
+                    Review pending customer registrations
+                    and verify eligible accounts.
+                </p>
+
+            </div>
+
+        </a>
+
+
+        <!-- WATER SUPPLY -->
+
+        <a
+            class="action-card"
+            href="#"
+        >
+
+            <div class="action-icon">
+                💧
+            </div>
+
+            <div>
+
+                <h3>
+                    Water Supply
+                </h3>
+
+                <p>
+                    Monitor water supply information,
+                    distribution activities and service status.
+                </p>
+
+            </div>
+
+        </a>
+
+
+        <!-- METER READINGS -->
+
+        <a
+            class="action-card"
+            href="#"
+        >
+
+            <div class="action-icon">
+                📊
+            </div>
+
+            <div>
+
+                <h3>
+                    Meter Readings
+                </h3>
+
+                <p>
+                    Record and review customer meter readings
+                    for water usage monitoring.
+                </p>
+
+            </div>
+
+        </a>
+
+
+        <!-- BILLING -->
+
+        <a
+            class="action-card"
+            href="#"
+        >
+
+            <div class="action-icon">
+                ₹
+            </div>
+
+            <div>
+
+                <h3>
+                    Billing
+                </h3>
+
+                <p>
+                    View water consumption and manage
+                    billing-related records.
+                </p>
+
+            </div>
+
+        </a>
+
+
+        <!-- MAINTENANCE -->
+
+        <a
+            class="action-card"
+            href="#"
+        >
+
+            <div class="action-icon">
+                🔧
+            </div>
+
+            <div>
+
+                <h3>
+                    Maintenance
+                </h3>
+
+                <p>
+                    Monitor leakage, complaints and
+                    maintenance activities.
+                </p>
+
+            </div>
+
+        </a>
+
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     PENDING CUSTOMER VERIFICATION
+     ========================================================= -->
+
+<div class="card">
+
+    <div class="section-heading">
+
+        <div>
+
+            <h2>
+                Pending Customer Verification
+            </h2>
+
+            <p class="subtitle">
+                Customers waiting for officer verification.
+            </p>
+
+        </div>
+
+
+        <a
+            class="btn btn-outline"
+            href="{{ url_for('customer.list_customers') }}"
+        >
+            View all
+        </a>
+
+    </div>
+
+
+    {% if pending_customer_list %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Name
+                    </th>
+
+                    <th>
+                        Phone
+                    </th>
+
+                    <th>
+                        Meter No.
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for customer in pending_customer_list %}
+
+                    <tr>
+
+                        <td class="mono">
+                            #{{ customer.customer_id }}
+                        </td>
+
+                        <td>
+                            {{ customer.name }}
+                        </td>
+
+                        <td class="mono">
+                            {{ customer.phone }}
+                        </td>
+
+                        <td class="mono">
+                            {{ customer.meter_no }}
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-pending">
+                                Pending
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'customer.verify_customer',
+                                    customer_id=customer.customer_id
+                                ) }}"
+                                style="display:inline;"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="{{ csrf_token() }}"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary btn-sm"
+                                >
+                                    Verify
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="drop-lg"></div>
+
+            <p>
+                No customers are currently waiting for verification.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =========================================================
+     QUICK INFORMATION
+     ========================================================= -->
+
+<div class="card">
+
+    <h2>
+        Officer Responsibilities
+    </h2>
+
+    <div class="responsibility-list">
+
+        <div class="responsibility-item">
+
+            <strong>
+                Customer Verification
+            </strong>
+
+            <span>
+                Review and verify customer registrations.
+            </span>
+
+        </div>
+
+
+        <div class="responsibility-item">
+
+            <strong>
+                Water Supply Monitoring
+            </strong>
+
+            <span>
+                Monitor water supply and distribution activities.
+            </span>
+
+        </div>
+
+
+        <div class="responsibility-item">
+
+            <strong>
+                Meter Management
+            </strong>
+
+            <span>
+                Review water meter readings and consumption records.
+            </span>
+
+        </div>
+
+
+        <div class="responsibility-item">
+
+            <strong>
+                Billing
+            </strong>
+
+            <span>
+                Monitor consumption and billing information.
+            </span>
+
+        </div>
+
+
+        <div class="responsibility-item">
+
+            <strong>
+                Maintenance Coordination
+            </strong>
+
+            <span>
+                Monitor maintenance and leakage-related requests.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

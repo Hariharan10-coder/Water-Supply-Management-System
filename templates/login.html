@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log in · WSMS</title>
+
+  <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+  <div class="auth-wrap">
+
+    <div class="auth-card">
+
+      <div class="auth-header">
+        <h1>Welcome back</h1>
+        <p>Sign in to Water Supply Management System</p>
+        <div class="wave"></div>
+      </div>
+
+      <div class="auth-body">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash flash-{{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- LOGIN FORM -->
+        <form method="POST" action="{{ url_for('auth.login') }}">
+
+          <!-- CSRF TOKEN -->
+          <input type="hidden"
+                 name="csrf_token"
+                 value="{{ csrf_token() }}">
+
+          <div class="form-group">
+            <label for="username">Username</label>
+
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+            >
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            style="width:100%; justify-content:center;"
+          >
+            Log in
+          </button>
+
+        </form>
+
+        <!-- CUSTOMER FORGOT PASSWORD -->
+        <p class="auth-footer">
+          <a href="{{ url_for('auth.forgot_password') }}">
+            Forgot Password?
+          </a>
+        </p>
+
+        <!-- CUSTOMER REGISTRATION -->
+        <p class="auth-footer">
+          New customer?
+          <a href="{{ url_for('auth.register_customer') }}">
+            Register here
+          </a>.
+          <br>
+
+          <span style="font-size:0.78rem;">
+            Officer &amp; Maintenance Staff accounts are created by an administrator.
+          </span>
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html> 

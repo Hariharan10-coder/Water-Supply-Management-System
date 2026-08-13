@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}Maintenance Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="topbar">
+    <div>
+        <h1>Maintenance Dashboard</h1>
+
+        <p class="subtitle">
+            Water supply maintenance and service management
+        </p>
+    </div>
+</div>
+
+
+<!-- =========================================================
+     SUMMARY CARDS
+     ========================================================= -->
+
+<div class="stats-grid">
+
+    <div class="card stat-card">
+        <div class="stat-label">Assigned Complaints</div>
+        <div class="stat-value">{{ assigned_complaints|default(0) }}</div>
+        <div class="stat-help">
+            Complaints assigned to you
+        </div>
+    </div>
+
+
+    <div class="card stat-card">
+        <div class="stat-label">Pending Work</div>
+        <div class="stat-value">{{ pending_work|default(0) }}</div>
+        <div class="stat-help">
+            Maintenance work pending
+        </div>
+    </div>
+
+
+    <div class="card stat-card">
+        <div class="stat-label">In Progress</div>
+        <div class="stat-value">{{ in_progress|default(0) }}</div>
+        <div class="stat-help">
+            Currently being handled
+        </div>
+    </div>
+
+
+    <div class="card stat-card">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value">{{ completed_work|default(0) }}</div>
+        <div class="stat-help">
+            Maintenance completed
+        </div>
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     QUICK ACTIONS
+     ========================================================= -->
+
+<div class="card">
+
+    <h2>Maintenance Tasks</h2>
+
+    <p class="subtitle">
+        Manage assigned water supply maintenance activities.
+    </p>
+
+
+    <div class="action-grid">
+
+        <a href="#" class="btn btn-primary">
+            View Assigned Work
+        </a>
+
+        <a href="#" class="btn btn-outline">
+            Report Maintenance Issue
+        </a>
+
+        <a href="#" class="btn btn-outline">
+            Update Work Status
+        </a>
+
+        <a href="#" class="btn btn-outline">
+            View Completed Work
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     RECENT WORK
+     ========================================================= -->
+
+<div class="card">
+
+    <div class="topbar">
+        <div>
+            <h2>Recent Maintenance Work</h2>
+
+            <p class="subtitle">
+                Latest assigned maintenance activities
+            </p>
+        </div>
+    </div>
+
+
+    {% if maintenance_tasks %}
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Task ID</th>
+                <th>Customer</th>
+                <th>Issue</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+
+        <tbody>
+
+        {% for task in maintenance_tasks %}
+
+            <tr>
+
+                <td class="mono">
+                    #{{ task.task_id }}
+                </td>
+
+                <td>
+                    {{ task.customer_name }}
+                </td>
+
+                <td>
+                    {{ task.issue }}
+                </td>
+
+                <td>
+
+                    {% if task.status == "Completed" %}
+
+                        <span class="badge badge-active">
+                            Completed
+                        </span>
+
+                    {% elif task.status == "In Progress" %}
+
+                        <span class="badge badge-pending">
+                            In Progress
+                        </span>
+
+                    {% else %}
+
+                        <span class="badge badge-pending">
+                            Pending
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+
+                <td>
+
+                    <a
+                        href="#"
+                        class="btn btn-outline btn-sm"
+                    >
+                        View
+                    </a>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="drop-lg"></div>
+
+            <p>
+                No maintenance work has been assigned yet.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =========================================================
+     MAINTENANCE STATUS
+     ========================================================= -->
+
+<div class="card">
+
+    <h2>Maintenance Status</h2>
+
+    <div class="status-list">
+
+        <div class="status-row">
+            <span>Pending</span>
+            <strong>{{ pending_work|default(0) }}</strong>
+        </div>
+
+        <div class="status-row">
+            <span>In Progress</span>
+            <strong>{{ in_progress|default(0) }}</strong>
+        </div>
+
+        <div class="status-row">
+            <span>Completed</span>
+            <strong>{{ completed_work|default(0) }}</strong>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

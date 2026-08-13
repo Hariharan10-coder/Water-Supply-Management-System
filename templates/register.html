@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register · WSMS</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-card wide">
+      <div class="auth-header">
+        <h1>Create your customer account</h1>
+        <p>For registered water consumers only. Staff accounts are issued by an administrator.</p>
+        <div class="wave"></div>
+      </div>
+      <div class="auth-body">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        
+        <form method="POST" action="{{ url_for('auth.register_customer') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <h2 style="font-size:0.95rem; margin-bottom:12px;">Service details</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Full name</label>
+              <input type="text" id="name" name="name" value="{{ form.get('name','') }}" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone number</label>
+              <input type="text" id="phone" name="phone" value="{{ form.get('phone','') }}" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="address">Service address</label>
+            <input type="text" id="address" name="address" value="{{ form.get('address','') }}" required>
+          </div>
+          <div class="form-group">
+            <label for="meter_no">Water meter number</label>
+            <input type="text" id="meter_no" name="meter_no" value="{{ form.get('meter_no','') }}" required>
+            <p class="hint">Found on your physical meter or prior utility paperwork. An officer will verify this before your account is activated.</p>
+          </div>
+
+          <h2 style="font-size:0.95rem; margin:18px 0 12px;">Login credentials</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="username" value="{{ form.get('username','') }}" required minlength="4">
+            </div>
+            <div></div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" required minlength="8">
+              <p class="hint">At least 8 characters, with a letter and a number.</p>
+            </div>
+            <div class="form-group">
+              <label for="confirm_password">Confirm password</label>
+              <input type="password" id="confirm_password" name="confirm_password" required minlength="8">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Create account</button>
+        </form>
+
+        <p class="auth-footer">Already registered? <a href="{{ url_for('auth.login') }}">Log in</a>.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

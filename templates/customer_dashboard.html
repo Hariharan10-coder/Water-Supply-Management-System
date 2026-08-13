@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="topbar">
+    <div>
+        <h1>Customer Dashboard</h1>
+
+        <p class="subtitle">
+            Welcome, {{ current_user.username }}
+        </p>
+    </div>
+
+    <a
+        href="{{ url_for('auth.change_password') }}"
+        class="btn btn-outline"
+    >
+        Change Password
+    </a>
+</div>
+
+
+<!-- =========================================================
+     CUSTOMER INFORMATION
+========================================================= -->
+
+{% if customer %}
+
+<div class="card">
+    <h2>My Account</h2>
+
+    <div class="dashboard-grid">
+
+        <div class="dashboard-item">
+            <span class="dashboard-label">Customer ID</span>
+            <strong class="mono">
+                #{{ customer.customer_id }}
+            </strong>
+        </div>
+
+
+        <div class="dashboard-item">
+            <span class="dashboard-label">Name</span>
+            <strong>
+                {{ customer.name }}
+            </strong>
+        </div>
+
+
+        <div class="dashboard-item">
+            <span class="dashboard-label">Phone</span>
+            <strong class="mono">
+                {{ customer.phone }}
+            </strong>
+        </div>
+
+
+        <div class="dashboard-item">
+            <span class="dashboard-label">Meter Number</span>
+            <strong class="mono">
+                {{ customer.meter_no }}
+            </strong>
+        </div>
+
+
+        <div class="dashboard-item">
+            <span class="dashboard-label">Address</span>
+            <strong>
+                {{ customer.address }}
+            </strong>
+        </div>
+
+
+        <div class="dashboard-item">
+            <span class="dashboard-label">Account Status</span>
+
+            {% if customer.status == 'Active' %}
+
+                <span class="badge badge-active">
+                    Active
+                </span>
+
+            {% else %}
+
+                <span class="badge badge-pending">
+                    {{ customer.status }}
+                </span>
+
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+
+<!-- =========================================================
+     WATER SUPPLY STATUS
+========================================================= -->
+
+<div class="dashboard-grid">
+
+    <div class="card dashboard-card">
+
+        <div class="dashboard-icon">
+            💧
+        </div>
+
+        <h3>Water Supply</h3>
+
+        {% if customer.status == 'Active' %}
+
+            <p class="status-text success-text">
+                Supply Active
+            </p>
+
+            <p class="subtitle">
+                Your water connection is currently active.
+            </p>
+
+        {% else %}
+
+            <p class="status-text warning-text">
+                Pending Verification
+            </p>
+
+            <p class="subtitle">
+                Your connection is waiting for verification.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         METER
+    ====================================================== -->
+
+    <div class="card dashboard-card">
+
+        <div class="dashboard-icon">
+            📟
+        </div>
+
+        <h3>Water Meter</h3>
+
+        <p class="status-text">
+            {{ customer.meter_no }}
+        </p>
+
+        <p class="subtitle">
+            Registered meter number
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         ACCOUNT
+    ====================================================== -->
+
+    <div class="card dashboard-card">
+
+        <div class="dashboard-icon">
+            👤
+        </div>
+
+        <h3>Account</h3>
+
+        <p class="status-text">
+            {{ current_user.username }}
+        </p>
+
+        <p class="subtitle">
+            Customer account
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     SERVICE INFORMATION
+========================================================= -->
+
+<div class="card">
+
+    <h2>Water Supply Services</h2>
+
+    <div class="service-list">
+
+        <div class="service-item">
+
+            <div>
+                <strong>Connection Status</strong>
+
+                <p class="subtitle">
+                    Check whether your water connection is active.
+                </p>
+            </div>
+
+            {% if customer.status == 'Active' %}
+
+                <span class="badge badge-active">
+                    Active
+                </span>
+
+            {% else %}
+
+                <span class="badge badge-pending">
+                    Pending
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="service-item">
+
+            <div>
+                <strong>Meter Information</strong>
+
+                <p class="subtitle">
+                    Your registered water meter number.
+                </p>
+            </div>
+
+            <span class="mono">
+                {{ customer.meter_no }}
+            </span>
+
+        </div>
+
+
+        <div class="service-item">
+
+            <div>
+                <strong>Registered Phone</strong>
+
+                <p class="subtitle">
+                    Phone number associated with your account.
+                </p>
+            </div>
+
+            <span class="mono">
+                {{ customer.phone }}
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% else %}
+
+
+<!-- =========================================================
+     CUSTOMER NOT FOUND
+========================================================= -->
+
+<div class="card empty-state">
+
+    <div class="drop-lg"></div>
+
+    <h2>Customer information unavailable</h2>
+
+    <p>
+        Your customer account could not be found.
+        Please contact the Water Supply Officer.
+    </p>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

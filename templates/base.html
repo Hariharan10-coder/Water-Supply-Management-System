@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}WSMS{% endblock %} · Water Supply Management</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <aside class="sidebar">
+
+      <div class="brand">
+        <span class="drop"></span>
+        <span class="name">
+          WSMS
+          <small>Water Supply Mgmt.</small>
+        </span>
+      </div>
+
+
+      <nav>
+
+        <!-- GENERAL -->
+        <div class="nav-section">General</div>
+
+        <a class="nav-link {{ 'active' if request.endpoint == 'auth.dashboard' }}"
+           href="{{ url_for('auth.dashboard') }}">
+          <span class="dot"></span> Dashboard
+        </a>
+
+
+        <!-- CUSTOMERS -->
+        {% if current_user.has_role('admin', 'officer') %}
+
+        <div class="nav-section">Customers</div>
+
+        <a class="nav-link {{ 'active' if request.endpoint == 'customer.list_customers' }}"
+           href="{{ url_for('customer.list_customers') }}">
+          <span class="dot"></span> All customers
+        </a>
+
+        {% endif %}
+
+
+        <!-- ADMINISTRATION -->
+        {% if current_user.has_role('admin') %}
+
+        <a class="nav-link {{ 'active' if request.endpoint == 'customer.add_customer' }}"
+           href="{{ url_for('customer.add_customer') }}">
+          <span class="dot"></span> Add customer
+        </a>
+
+        <div class="nav-section">Administration</div>
+
+        <!-- CREATE STAFF -->
+        <a class="nav-link {{ 'active' if request.endpoint == 'auth.create_staff_user' }}"
+           href="{{ url_for('auth.create_staff_user') }}">
+          <span class="dot"></span> Create staff account
+        </a>
+
+        <!-- STAFF ACCOUNTS -->
+        <a class="nav-link {{ 'active' if request.endpoint == 'auth.list_staff_users' }}"
+           href="{{ url_for('auth.list_staff_users') }}">
+          <span class="dot"></span> Staff accounts
+        </a>
+
+        {% endif %}
+
+
+        <!-- ACCOUNT -->
+        <div class="nav-section">Account</div>
+
+        <a class="nav-link {{ 'active' if request.endpoint == 'auth.change_password' }}"
+           href="{{ url_for('auth.change_password') }}">
+          <span class="dot"></span> Change password
+        </a>
+
+      </nav>
+
+
+      <!-- CURRENT USER -->
+      <div class="user-card">
+
+        <div>{{ current_user.username }}</div>
+
+        <span class="role-badge">
+          {{ current_user.role }}
+        </span>
+
+        <a class="logout-link"
+           href="{{ url_for('auth.logout') }}">
+          Log out
+        </a>
+
+      </div>
+
+    </aside>
+
+
+    <main class="main">
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+          {% for category, message in messages %}
+
+            <div class="flash flash-{{ category }}">
+              {{ message }}
+            </div>
+
+          {% endfor %}
+
+        {% endif %}
+
+      {% endwith %}
+
+
+      {% block content %}{% endblock %}
+
+    </main>
+
+  </div>
+
+</body>
+</html>

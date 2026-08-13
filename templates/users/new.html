@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Create staff account{% endblock %}
+{% block content %}
+  <h1>Create staff account</h1>
+  <p class="subtitle">Officer and Maintenance Staff accounts can only be created here by an administrator — there is no public signup for these roles.</p>
+
+  <div class="card" style="max-width:460px;">
+    <form method="POST" action="{{ url_for('auth.create_staff_user') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" value="{{ form.get('username','') }}" required minlength="4">
+      </div>
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" name="role" required>
+          <option value="">Select a role…</option>
+          <option value="officer" {{ 'selected' if form.get('role') == 'officer' }}>Water Supply Officer</option>
+          <option value="staff" {{ 'selected' if form.get('role') == 'staff' }}>Maintenance Staff</option>
+        </select>
+      </div>
+      <p class="hint" style="margin-bottom:16px;">
+        A random temporary password will be generated and shown once. The user must
+        change it on first login.
+      </p>
+      <button type="submit" class="btn btn-primary">Create account</button>
+    </form>
+  </div>
+{% endblock %}
