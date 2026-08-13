@@ -33,5 +33,10 @@ Thumbs.db
 .mypy_cache/
 
 # Logs
-*.log*.class
+*.log
+
+# Java compiled files
+*.class
+
+# Java dependency
 mysql-connector-j-26.7.0.jar
