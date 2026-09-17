@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WSMS{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/dashboard" class="brand">💧 WSMS</a>
+        <div class="nav-links">
+            {% if current_user.is_authenticated %}
+                <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+
+                {% if current_user.has_role('admin', 'officer') %}
+                    <a href="/customers"><i class="fas fa-users"></i> Customers</a>
+                    {% if current_user.has_role('admin') %}
+                    <a href="/users/"><i class="fas fa-user-shield"></i> Staff Accounts</a>
+                    {% endif %}
+                    <a href="/billing"><i class="fas fa-file-invoice"></i> Billing</a>
+                    <a href="/installation/readings"><i class="fas fa-tachometer-alt"></i> Readings</a>
+                    <a href="/maintenance"><i class="fas fa-tools"></i> Maintenance</a>
+                    <a href="/leakage"><i class="fas fa-exclamation-triangle"></i> Leakage</a>
+                {% elif current_user.has_role('staff') %}
+                    <a href="/installation/list"><i class="fas fa-tools"></i> My Tasks</a>
+                    <a href="/installation/readings"><i class="fas fa-tachometer-alt"></i> Readings</a>
+                    <a href="/maintenance"><i class="fas fa-wrench"></i> Maintenance</a>
+                    <a href="/leakage"><i class="fas fa-tint"></i> Leakage</a>
+                {% elif current_user.has_role('customer') %}
+                    <a href="/meter/"><i class="fas fa-tachometer-alt"></i> My Meter</a>
+                    <a href="/billing"><i class="fas fa-file-invoice"></i> My Bills</a>
+                    <a href="/maintenance"><i class="fas fa-tools"></i> Requests</a>
+                    <a href="/leakage"><i class="fas fa-exclamation-triangle"></i> Leakage</a>
+                {% endif %}
+
+                <a href="/notifications/" class="bell">
+                    <i class="fas fa-bell"></i>
+                    {% if unread_count and unread_count > 0 %}
+                    <span class="badge">{{ unread_count }}</span>
+                    {% endif %}
+                </a>
+
+                <a href="/change-password" title="Change Password"><i class="fas fa-key"></i></a>
+                <a href="/logout" style="color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            {% else %}
+                <a href="/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="/register"><i class="fas fa-user-plus"></i> Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 Water Supply Management System</p>
+    </footer>
+</body>
+</html>

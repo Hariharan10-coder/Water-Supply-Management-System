@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Staff Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Staff Dashboard</h1>
+        <p>Welcome, {{ current_user.username }}</p>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-tools"></i></div>
+        <div><h3>Installations</h3><p>{{ installs }}</p></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon gold"><i class="fas fa-tachometer-alt"></i></div>
+        <div><h3>Readings Due</h3><p>{{ readings_due }}</p></div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>My Tasks</h2>
+    <div class="action-grid">
+        <a href="/installation/list" class="action-card"><i class="fas fa-tools"></i><h3>Installations</h3></a>
+        <a href="/installation/readings" class="action-card"><i class="fas fa-tachometer-alt"></i><h3>Readings</h3></a>
+        <a href="/maintenance" class="action-card"><i class="fas fa-wrench"></i><h3>Maintenance</h3></a>
+        <a href="/leakage" class="action-card"><i class="fas fa-tint"></i><h3>Leakage</h3></a>
+    </div>
+</div>
+{% endblock %}

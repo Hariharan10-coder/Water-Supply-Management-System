@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Verify Customer{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Verify Customer & Assign Staff</h1>
+        <p>Confirm the customer and assign a staff member to install the meter</p>
+    </div>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <h3>Customer Details</h3>
+    <div class="info-grid" style="margin-bottom: 20px;">
+        <div><strong>Name:</strong> {{ customer.name }}</div>
+        <div><strong>Phone:</strong> {{ customer.phone }}</div>
+        <div><strong>Address:</strong> {{ customer.address }}</div>
+        <div><strong>Meter Number:</strong> <span class="meter-no">{{ customer.meter_no }}</span></div>
+    </div>
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-group">
+            <label>Assign Zone *</label>
+            <select name="zone" required>
+                <option value="">Select zone</option>
+                {% for z in zones %}
+                <option value="{{ z }}">{{ z }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Assign Installation Staff *</label>
+            <select name="staff_id" required>
+                <option value="">Select staff member</option>
+                {% for s in staff_members %}
+                <option value="{{ s.user_id }}">{{ s.username }} ({{ s.email or 'no email' }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Notes (Optional)</label>
+            <textarea name="notes" rows="3" placeholder="Any instructions for the staff..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary">
+            <i class="fas fa-check"></i> Verify & Assign
+        </button>
+        <a href="/customers" class="btn-outline">Cancel</a>
+    </form>
+</div>
+{% endblock %}

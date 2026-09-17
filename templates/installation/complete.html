@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Complete Installation{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Complete Meter Installation</h1>
+        <p>Record installation details for {{ installation.customer.name }}</p>
+    </div>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <h3>Customer Information</h3>
+    <div class="info-grid" style="margin-bottom: 20px;">
+        <div><strong>Name:</strong> {{ installation.customer.name }}</div>
+        <div><strong>Meter Number:</strong> <span class="meter-no">{{ installation.customer.meter_no }}</span></div>
+        <div><strong>Address:</strong> {{ installation.customer.address }}</div>
+    </div>
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-group">
+            <label>Meter Serial Number</label>
+            <input type="text" name="meter_serial" placeholder="e.g. MET-2026-0001">
+        </div>
+
+        <div class="form-group">
+            <label>Meter Type</label>
+            <select name="meter_type">
+                <option value="Digital">Digital</option>
+                <option value="Analog">Analog</option>
+                <option value="Smart">Smart</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Initial Reading *</label>
+            <input type="number" name="initial_reading" step="0.01" value="0" required>
+            <small>Usually 0 for a new meter</small>
+        </div>
+
+        <button type="submit" class="btn-primary">
+            <i class="fas fa-check"></i> Complete Installation
+        </button>
+        <a href="/installation/list" class="btn-outline">Cancel</a>
+    </form>
+</div>
+{% endblock %}

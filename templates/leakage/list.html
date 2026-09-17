@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Leakage Reports{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Leakage Reports</h1>
+    <a href="/leakage/new" class="btn-primary"><i class="fas fa-plus"></i> Report Leakage</a>
+</div>
+
+<div class="card">
+    {% if reports %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th><th>Location</th><th>Severity</th><th>Status</th>
+                <th>Assigned To</th>
+                {% if current_user.has_role('admin', 'officer') %}<th>Assign</th>{% endif %}
+                {% if current_user.has_role('staff', 'admin', 'officer') %}<th>Update</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for r in reports %}
+        <tr>
+            <td>#{{ r.report_id }}</td>
+            <td>{{ r.location }}</td>
+            <td>{{ r.severity }}</td>
+            <td><span class="badge badge-pending">{{ r.status }}</span></td>
+            <td>{{ r.assignee.username if r.assignee else 'Unassigned' }}</td>
+            {% if current_user.has_role('admin', 'officer') %}
+            <td>
+                <form method="POST" action="/leakage/{{ r.report_id }}/assign" style="display: flex; gap: 4px;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <select name="staff_id" required style="width: 100px;">
+                        <option value="">Staff</option>
+                        {% for s in maintenance_staff %}<option value="{{ s.user_id }}">{{ s.username }}</option>{% endfor %}
+                    </select>
+                    <button class="btn-sm btn-primary">→</button>
+                </form>
+            </td>
+            {% endif %}
+            {% if current_user.has_role('staff', 'admin', 'officer') %}
+            <td>
+                <form method="POST" action="/leakage/{{ r.report_id }}/status" style="display: flex; gap: 4px;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <select name="status" style="width: 110px;">
+                        <option>In Progress</option><option>Resolved</option><option>Closed</option>
+                    </select>
+                    <button class="btn-sm btn-primary">✓</button>
+                </form>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-tint"></i>
+        <h3>No Leakage Reports</h3>
+        <p>No leakage reports yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Generate Bill{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Generate Bill</h1></div>
+<div class="card" style="max-width: 500px;">
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+            <label>Customer</label>
+            <select name="customer_id" required>
+                <option value="">Select customer</option>
+                {% for c in customers %}
+                <option value="{{ c.customer_id }}">{{ c.name }} - {{ c.meter_no }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Rate per unit (₹)</label>
+            <input type="number" name="rate" value="10" step="0.01" required>
+        </div>
+        <button type="submit" class="btn-primary">Generate Bill</button>
+        <a href="/billing" class="btn-outline">Cancel</a>
+    </form>
+</div>
+{% endblock %}

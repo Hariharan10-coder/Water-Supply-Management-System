@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Billing{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Billing</h1>
+    {% if current_user.has_role('admin', 'officer') %}
+    <a href="/billing/generate" class="btn-primary"><i class="fas fa-plus"></i> Generate Bill</a>
+    {% endif %}
+</div>
+
+<div class="card">
+    {% if bills %}
+    <table>
+        <thead>
+            <tr>
+                <th>Bill</th><th>Customer</th><th>Units</th><th>Amount</th>
+                <th>Late Fee</th><th>Total</th><th>Due</th><th>Status</th><th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for b in bills %}
+        <tr>
+            <td>#{{ b.bill_id }}</td>
+            <td>{{ b.customer.name }}</td>
+            <td>{{ b.units_consumed }}</td>
+            <td>₹{{ '%.2f'|format(b.amount) }}</td>
+            <td>₹{{ '%.2f'|format(b.late_fee or 0) }}</td>
+            <td><strong>₹{{ '%.2f'|format(b.total_amount or 0) }}</strong></td>
+            <td>{{ b.due_date.strftime('%d/%m/%Y') }}</td>
+            <td>
+                {% if b.status == 'Paid' %}
+                    <span class="badge badge-active">Paid</span>
+                {% elif b.status == 'Overdue' %}
+                    <span class="badge badge-overdue">Overdue</span>
+                {% else %}
+                    <span class="badge badge-pending">Pending</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if b.status != 'Paid' and current_user.has_role('admin', 'officer', 'customer') %}
+                <form method="POST" action="/billing/{{ b.bill_id }}/pay" style="display: flex; gap: 6px;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="text" name="reference" placeholder="Ref#" style="width: 80px;" required>
+                    <button class="btn-success btn-sm"><i class="fas fa-check"></i></button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-file-invoice"></i>
+        <h3>No Bills</h3>
+        <p>No bills generated yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

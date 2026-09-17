@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Installations{% endblock %}
+{% block content %}
+<div class="page-header"><h1>Meter Installations</h1></div>
+<div class="card">
+    {% if installations %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th><th>Customer</th><th>Meter No</th><th>Assigned To</th>
+                <th>Status</th><th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in installations %}
+        <tr>
+            <td>#{{ i.installation_id }}</td>
+            <td>{{ i.customer.name }}</td>
+            <td><span class="meter-no">{{ i.customer.meter_no }}</span></td>
+            <td>{{ i.staff.username }}</td>
+            <td>
+                {% if i.meter_status == 'Installed' %}
+                    <span class="badge badge-active">Installed</span>
+                {% elif i.meter_status == 'In Progress' %}
+                    <span class="badge badge-pending">In Progress</span>
+                {% else %}
+                    <span class="badge badge-pending">{{ i.meter_status }}</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if i.meter_status != 'Installed' and current_user.has_role('staff') and i.staff_id == current_user.user_id %}
+                <a href="/installation/{{ i.installation_id }}" class="btn-success btn-sm">
+                    <i class="fas fa-tools"></i> Complete
+                </a>
+                {% elif i.meter_status == 'Installed' %}
+                <span class="text-muted">Done</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-tools"></i>
+        <h3>No Installations</h3>
+        <p>No meter installations assigned yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

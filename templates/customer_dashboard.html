@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Customer Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Customer Dashboard</h1>
+        <p>Welcome, {{ current_user.username }}</p>
+    </div>
+</div>
+
+{% if customer %}
+<div class="card">
+    <h2>My Account</h2>
+    <div class="info-grid">
+        <div><strong>Customer ID:</strong> #{{ customer.customer_id }}</div>
+        <div><strong>Name:</strong> {{ customer.name }}</div>
+        <div><strong>Phone:</strong> {{ customer.phone }}</div>
+        <div><strong>Meter Number:</strong> <span class="meter-no">{{ customer.meter_no }}</span></div>
+        <div><strong>Address:</strong> {{ customer.address }}</div>
+        <div><strong>Zone:</strong> {{ customer.zone or 'Not assigned' }}</div>
+        <div><strong>Status:</strong> <span class="badge badge-{{ customer.status|lower }}">{{ customer.status }}</span></div>
+    </div>
+</div>
+{% endif %}
+
+<div class="card">
+    <h2>Actions</h2>
+    <div class="action-grid">
+        <a href="/meter/" class="action-card"><i class="fas fa-tachometer-alt"></i><h3>My Meter</h3></a>
+        <a href="/billing" class="action-card"><i class="fas fa-file-invoice"></i><h3>My Bills</h3></a>
+        <a href="/leakage/new" class="action-card"><i class="fas fa-exclamation-triangle"></i><h3>Report Leakage</h3></a>
+        <a href="/maintenance/new" class="action-card"><i class="fas fa-tools"></i><h3>Request Service</h3></a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Customers{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div><h1>Customers</h1><p>View and manage customer accounts.</p></div>
+</div>
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th><th>Name</th><th>Phone</th><th>Meter No</th>
+                <th>Zone</th><th>Status</th><th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for c in customers %}
+        <tr>
+            <td>#{{ c.customer_id }}</td>
+            <td>{{ c.name }}</td>
+            <td>{{ c.phone }}</td>
+            <td><span class="meter-no">{{ c.meter_no }}</span></td>
+            <td>{{ c.zone or '-' }}</td>
+            <td>
+                {% if c.status == 'Active' %}
+                    <span class="badge badge-active">Active</span>
+                {% elif c.status == 'Pending' %}
+                    <span class="badge badge-pending">Pending</span>
+                {% else %}
+                    <span class="badge">{{ c.status }}</span>
+                {% endif %}
+            </td>
+            <td>
+                <div style="display:flex;gap:.35rem;flex-wrap:wrap;">
+                    {% if c.status == 'Pending' %}
+                    <a href="/customers/{{ c.customer_id }}/verify" class="btn-success btn-sm">
+                        <i class="fas fa-check"></i> Verify
+                    </a>
+                    {% endif %}
+                    {% if current_user.has_role('admin') %}
+                    <a href="/customers/{{ c.customer_id }}/edit" class="btn-outline btn-sm">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <form method="POST" action="/customers/{{ c.customer_id }}/delete" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn-danger btn-sm"
+                                onclick="return confirm('Delete this customer account? This cannot be undone. If operational records exist, deletion will be blocked.')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

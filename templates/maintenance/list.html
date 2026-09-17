@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Maintenance{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Maintenance Requests</h1>
+    <a href="/maintenance/new" class="btn-primary"><i class="fas fa-plus"></i> New Request</a>
+</div>
+
+<div class="card">
+    {% if requests %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th><th>Customer</th><th>Issue</th><th>Priority</th>
+                <th>Status</th><th>Assigned To</th>
+                {% if current_user.has_role('admin', 'officer') %}<th>Assign</th>{% endif %}
+                {% if current_user.has_role('staff', 'admin', 'officer') %}<th>Update</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for r in requests %}
+        <tr>
+            <td>#{{ r.request_id }}</td>
+            <td>{{ r.customer.name }}</td>
+            <td><strong>{{ r.issue_type }}</strong></td>
+            <td>{{ r.priority }}</td>
+            <td><span class="badge badge-pending">{{ r.status }}</span></td>
+            <td>{{ r.assignee.username if r.assignee else 'Unassigned' }}</td>
+            {% if current_user.has_role('admin', 'officer') %}
+            <td>
+                <form method="POST" action="/maintenance/{{ r.request_id }}/assign" style="display: flex; gap: 4px;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <select name="staff_id" required style="width: 100px;">
+                        <option value="">Staff</option>
+                        {% for s in maintenance_staff %}
+                        <option value="{{ s.user_id }}">{{ s.username }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn-sm btn-primary">→</button>
+                </form>
+            </td>
+            {% endif %}
+            {% if current_user.has_role('staff', 'admin', 'officer') %}
+            <td>
+                <form method="POST" action="/maintenance/{{ r.request_id }}/status" style="display: flex; gap: 4px;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <select name="status" style="width: 110px;">
+                        <option>Assigned</option>
+                        <option>In Progress</option>
+                        <option>Completed</option>
+                    </select>
+                    <button class="btn-sm btn-primary">✓</button>
+                </form>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-tools"></i>
+        <h3>No Requests</h3>
+        <p>No maintenance requests yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

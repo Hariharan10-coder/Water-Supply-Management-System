@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Manage Staff Accounts{% endblock %}
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1><i class="fas fa-user-shield"></i> Staff Accounts</h1>
+        <p>Create and manage Water Supply Officer and Maintenance Staff accounts.</p>
+    </div>
+    <a href="/users/new" class="btn-primary"><i class="fas fa-user-plus"></i> Create Account</a>
+</div>
+
+<div class="card">
+    {% if users %}
+    <table>
+        <thead>
+            <tr>
+                <th>Full Name</th><th>Username</th><th>Role</th><th>Phone</th>
+                <th>Email</th><th>Status</th><th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.full_name or '—' }}</td>
+            <td><strong>{{ user.username }}</strong></td>
+            <td>{{ 'Water Supply Officer' if user.role == 'officer' else 'Maintenance Staff' }}</td>
+            <td>{{ user.phone or '—' }}</td>
+            <td>{{ user.email or '—' }}</td>
+            <td>
+                {% if user.is_active_account %}
+                    <span class="badge badge-active">Active</span>
+                {% else %}
+                    <span class="badge badge-rejected">Inactive</span>
+                {% endif %}
+            </td>
+            <td>
+                <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+                    <a href="/users/{{ user.user_id }}/edit" class="btn-outline btn-sm"><i class="fas fa-edit"></i> Edit</a>
+                    <form method="POST" action="/users/{{ user.user_id }}/reset-password" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn-primary btn-sm" onclick="return confirm('Generate a new temporary password for this user?')">
+                            <i class="fas fa-key"></i> Reset
+                        </button>
+                    </form>
+                    <form method="POST" action="/users/{{ user.user_id }}/toggle-active" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="{{ 'btn-danger' if user.is_active_account else 'btn-success' }} btn-sm"
+                                onclick="return confirm('{{ 'Deactivate' if user.is_active_account else 'Activate' }} this account?')">
+                            <i class="fas fa-power-off"></i> {{ 'Deactivate' if user.is_active_account else 'Activate' }}
+                        </button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-users"></i>
+        <h3>No Officer or Staff accounts</h3>
+        <p>Create the first account using the button above.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

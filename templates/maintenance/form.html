@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}New Request{% endblock %}
+{% block content %}
+<div class="page-header"><h1>New Maintenance Request</h1></div>
+<div class="card" style="max-width: 500px;">
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% if customers is not none %}
+        <div class="form-group">
+            <label>Customer</label>
+            <select name="customer_id" required>
+                <option value="">Select customer</option>
+                {% for c in customers %}<option value="{{ c.customer_id }}">{{ c.name }}</option>{% endfor %}
+            </select>
+        </div>
+        {% endif %}
+        <div class="form-group">
+            <label>Issue Type</label>
+            <select name="issue_type" required>
+                <option value="">Select issue</option>
+                <option>Low Water Supply</option>
+                <option>No Water Supply</option>
+                <option>Meter Problem</option>
+                <option>Pipe Problem</option>
+                <option>Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Priority</label>
+            <select name="priority">
+                <option>Low</option><option selected>Medium</option><option>High</option><option>Urgent</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn-primary">Submit</button>
+        <a href="/maintenance" class="btn-outline">Cancel</a>
+    </form>
+</div>
+{% endblock %}
